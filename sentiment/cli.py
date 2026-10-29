@@ -23,6 +23,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 
 def main(argv: list[str] | None = None) -> int:
+    # Windows consoles default to cp1252; emoji labels and non-Latin rationales
+    # raise UnicodeEncodeError without this.
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")
+        except (AttributeError, ValueError):
+            pass
+
     args = parse_args(argv)
     analyzer = build_default_analyzer()
 
